@@ -1,0 +1,23 @@
+{
+  "name": "ode_app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "lit": "^3.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.7",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.1",
+    "tailwindcss": "^3.4.17",
+    "typescript": "~5.6.2",
+    "vite": "^6.0.5"
+  }
+}
