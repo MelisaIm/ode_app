@@ -71,7 +71,7 @@ export class OutputArea extends LitElement {
             const appendEl = document.createElement("p");
             appendEl.textContent = "Generated with https://odeapp.netlify.app/ | Powered by OpenAI | Built by Melisa Im";
             this.outputElement.appendChild(appendEl)
-            const canvas = await html2canvas(this.outputElement);
+            const canvas = await html2canvas(this.outputElement, {backgroundColor: this.theme === "light" ? "#ffffff" : "#242424"});
             const image = canvas.toDataURL("image/png");
             const a = document.createElement("a");
             this.outputElement.removeChild(appendEl);
