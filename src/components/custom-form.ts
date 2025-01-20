@@ -56,6 +56,7 @@ export class Form extends LitElement {
                 name: this.name,
                 output: result.content
             }, bubbles: true, composed: true}));
+            this.form.reset();
             console.log(result);
         } catch(error) {
             console.error(error);
@@ -85,7 +86,7 @@ export class Form extends LitElement {
 
     generateInspirationRow(index: number) {
         return html`
-            <input type="text" name="inspiration${index}" id="${index}" placeholder="Quotes, things, places, capybaras" @keyup=${this.validateForm}>${this.inspirationsCount - 1 === index ? html`<button type="button" .index=${index} ?disabled=${!this.addEnabled} @click=${this.addInput}>Add +</button>` : nothing}<br>
+            <input type="text" name="inspiration${index}" id="${index}" placeholder="Quotes, things, places, capybaras" @keyup=${this.validateForm}>${this.inspirationsCount - 1 === index ? html`<button type="button" class="inspiration-add" .index=${index} ?disabled=${!this.addEnabled} @click=${this.addInput}>Add +</button>` : nothing}<br>
         `
     }
     
@@ -105,5 +106,11 @@ export class Form extends LitElement {
         #ode-form {
             display: grid;
         }
+
+        .inspiration-add {
+            margin-top: 5px;
+            margin-bottom: 10px
+        }
+        
     `
 }
