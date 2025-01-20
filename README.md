@@ -9,3 +9,4 @@ Features:
 2. Dark mode/light mode toggle (this will affect the logic and output)
 3. AI generated poems
 4. Gifs to enjoy while you wait
+5. Export to image or copy to clipboard options
