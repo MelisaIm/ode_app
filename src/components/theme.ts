@@ -37,7 +37,6 @@ export class ThemeControls extends LitElement {
             display: flex;
             flex-direction: row-reverse;
             padding: 1rem;
-            
         }
 
         span {

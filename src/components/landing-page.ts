@@ -1,4 +1,4 @@
-import { LitElement, css, html } from 'lit'
+import { LitElement, PropertyValues, css, html } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 
 /**
@@ -13,29 +13,53 @@ export class LandingPage extends LitElement {
   private theme: string = 'light';
 
   @state()
-  private loggedIn: boolean = false;
+  private loading: boolean = false;
+
+  @property({ type: String })
+  private name = "";
+
+  @property({ type: Object })
+  private output = undefined;
 
   connectedCallback() {
     super.connectedCallback();
     this.addEventListener('theme-toggle', this.toggleTheme);
+    this.addEventListener('generating-content', (e) => this.setLoadingState(true, e as CustomEvent));
+    this.addEventListener('content-loaded', (e) => this.setLoadingState(false, e as CustomEvent));
   }
 
   disconnectedCallback() {
     this.removeEventListener('theme-toggle', this.toggleTheme);
+    this.removeEventListener('generating-content', (e) => this.setLoadingState(true, e as CustomEvent));
+    this.removeEventListener('content-loaded', (e) => this.setLoadingState(false, e as CustomEvent));
     super.disconnectedCallback();
+  }
+
+  private setLoadingState(loading: boolean, customEvent?: CustomEvent) {
+    console.log("Setting loading state to: ", loading);
+    if (customEvent?.detail) {
+      this.name = customEvent.detail.name;
+      this.output = customEvent.detail.output;
+    }
+    if (loading === true) {
+      const outputElement = this.shadowRoot?.lastElementChild;
+      if (outputElement) {
+        outputElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+    this.loading = loading;
   }
 
   render() {
     return html`
-        <slot name="siso"></slot>
         <theme-controls class="theme-toggle" .theme=${this.theme}></theme-controls>
           <div class="brand">
             <img class="logo" src="/ode_logo.png" alt="Ode logo" width="100">
             <h1>Welcome to Ode</h1>
           </div>
           <h3>Start the year with the ${this.theme === 'light' ? 'right' : 'some bad'} vibes, message and intention. Write an ode to your ${this.theme === 'light' ? 'best' : 'worst'} self.</h3>
-        <slot name="input"></slot>
-        <slot name="output"></slot>
+        <custom-form .theme=${this.theme}></custom-form>
+        <output-area .loading=${this.loading} .theme=${this.theme} .name=${this.name} .output=${this.output}></output-area>
     `
   }
 
@@ -49,7 +73,7 @@ export class LandingPage extends LitElement {
       margin: 0 auto;
       padding: 2rem;
       text-align: center;
-      height: 100vh;
+      height: 100%;
     }
 
     .brand {
@@ -59,11 +83,6 @@ export class LandingPage extends LitElement {
     
     h3 {
       margin-top: 0;
-    }
-
-    .theme-toggle {
-      position: absolute;
-      right: 100px;
     }
 
     .logo {
