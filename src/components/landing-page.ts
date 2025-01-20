@@ -44,7 +44,7 @@ export class LandingPage extends LitElement {
     if (loading === true) {
       const outputElement = this.shadowRoot?.lastElementChild;
       if (outputElement) {
-        outputElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        outputElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }
     this.loading = loading;

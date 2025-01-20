@@ -1,6 +1,6 @@
-import { LitElement, html, css, PropertyValues } from "lit";
-import { customElement, property } from "lit/decorators.js";
-
+import { LitElement, html, css, PropertyValues, nothing } from "lit";
+import { customElement, property, query } from "lit/decorators.js";
+import html2canvas from "html2canvas";
 @customElement("output-area")
 export class OutputArea extends LitElement {
     showingDefault = true;
@@ -26,6 +26,9 @@ export class OutputArea extends LitElement {
 
     @property({ type: String, reflect: true})
     name = "someone special";
+
+    @query('#output-poem')
+    outputElement!: HTMLElement;
 
     async fetchSampleData() {
         const endpoint = import.meta.env.VITE_API_ENDPOINT || "http://localhost:5001";
@@ -63,6 +66,31 @@ export class OutputArea extends LitElement {
         }
     }
 
+    private async exportAsImage() {
+        if (this.outputElement) {
+            const appendEl = document.createElement("p");
+            appendEl.textContent = "Generated with https://odeapp.netlify.app/ | Powered by OpenAI | Built by Melisa Im";
+            this.outputElement.appendChild(appendEl)
+            const canvas = await html2canvas(this.outputElement);
+            const image = canvas.toDataURL("image/png");
+            const a = document.createElement("a");
+            this.outputElement.removeChild(appendEl);
+            a.href = image;
+            a.download = `${Date.now()}_ode_poem.png`;
+            a.click();
+        }
+    }
+
+    async copy() {
+        const content = this.output;
+        try {
+            await navigator.clipboard.writeText(content ?? "");
+        } catch (err) {
+            console.error("Failed to copy: ", err);
+            alert("Failed to copy to clipboard");
+        }
+    }
+
     render() {
         if (this.loading) {
             return html`
@@ -77,14 +105,43 @@ export class OutputArea extends LitElement {
         }
         return html`
             <div id="output">
-                <h2>${!this.output ? this.theme === "light" ? "An example positive ode" : "An example negative ode" : "Generated ode to " + this.name}</h2>
-                <p>Here is your poem:</p>
-                ${this.theme === "light" ? this.formatContent(this.output ?? this.mockData.positive?.content) : this.formatContent(this.output ?? this.mockData.negative?.content)}
+                <div id="output-poem" class=${this.theme}>
+                    <h2>${!this.output ? this.theme === "light" ? "An example positive ode" : "An example negative ode" : "Generated ode to " + this.name}</h2>
+                    ${this.theme === "light" ? this.formatContent(this.output ?? this.mockData.positive?.content) : this.formatContent(this.output ?? this.mockData.negative?.content)}
+                </div>
+                <div id="output-actions">
+                ${this.output ? html`<button @click=${this.exportAsImage}>Export as Image</button>` : nothing}
+                ${this.output ? html`<button @click=${this.copy}>Copy text</button>` : nothing}
+                </div>
+                <p>Thank you for using Ode! - Melisa Im</p>
             </div>
         `
     }
 
     static styles = css`
+        #output-poem {
+            padding: 1rem;
+            border-radius: 5px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        #output-poem .light {
+            background-color: #f7f7f7;
+            color: #333;
+        }
+
+        #output-poem .dark {
+            background-color: #333;
+            color: #f7f7f7;
+        }
+
+        #output-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
         #loading, #output {
             display: flex;
             flex-direction: column;
