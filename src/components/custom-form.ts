@@ -57,6 +57,7 @@ export class Form extends LitElement {
                 output: result.content
             }, bubbles: true, composed: true}));
             this.form.reset();
+            this.inspirationsCount = 1;
             console.log(result);
         } catch(error) {
             console.error(error);
