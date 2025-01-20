@@ -8,3 +8,4 @@ Features:
 1. Viewable/usable in desktop and mobile
 2. Dark mode/light mode toggle (this will affect the logic and output)
 3. AI generated poems
+4. Gifs to enjoy while you wait
